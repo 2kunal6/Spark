@@ -2,10 +2,11 @@ package de.fraunhofer.iais.kd.bda.spark;
 
 
 import java.util.Set;
+import java.io.Serializable;
 import java.util.HashSet;
 
 
-public class Userset {
+public class Userset implements Serializable {
 	public Set<String> userset = new HashSet<String>(); 
 	
 	//add a user to the userset

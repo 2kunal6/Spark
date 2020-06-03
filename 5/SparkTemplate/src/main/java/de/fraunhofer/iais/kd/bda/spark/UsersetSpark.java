@@ -1,8 +1,13 @@
 package de.fraunhofer.iais.kd.bda.spark;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -13,7 +18,7 @@ import scala.Tuple2;
 import de.fraunhofer.iais.kd.bda.spark.Userset;
 
 public class UsersetSpark {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 	//	String inputFile= "/home/livlab/data/last-fm-sample1000000.tsv";
 		
 		//put here the path to the input
@@ -45,7 +50,12 @@ public class UsersetSpark {
 				);
 
 		 
-		usersetcount.saveAsTextFile("userset");
+		//usersetcount.saveAsTextFile("userset");
+		List<String> ans = new ArrayList<String>();
+		for (Tuple2<String, Userset> test : usersetcount.collect()) {
+			ans.add(test._1 + ", " + test._2.userset);
+        }
+		FileUtils.writeLines(new File("userset.txt"), "utf-8", ans);
 		context.close();
 
 	}
