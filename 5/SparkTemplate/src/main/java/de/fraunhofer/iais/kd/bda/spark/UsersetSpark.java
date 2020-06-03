@@ -35,7 +35,7 @@ public class UsersetSpark {
 		JavaPairRDD<String, String> wordOne = words.mapToPair(word -> 
 	{return new Tuple2<String,String>(word.split("\t")[3], word.split("\t")[0]);});
 
-		JavaPairRDD<String, > usersetcount = wordOne.aggregateByKey(
+		JavaPairRDD<String, Userset> usersetcount = wordOne.aggregateByKey(
 				//aggregator initial value
 				new Userset(),
 				//how to add a value to aggregator
