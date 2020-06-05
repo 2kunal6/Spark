@@ -1,6 +1,5 @@
 package de.fraunhofer.iais.kd.bda.spark;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,43 +18,34 @@ import de.fraunhofer.iais.kd.bda.spark.Userset;
 
 public class UsersetSpark {
 	public static void main(String[] args) throws IOException {
-	//	String inputFile= "/home/livlab/data/last-fm-sample1000000.tsv";
-		
-		//put here the path to the input
-		String inputFile= "/home/kunal/Documents/DSBD/last-fm-sample1000000.tsv";
+		// String inputFile= "/home/livlab/data/last-fm-sample1000000.tsv";
+
+		// put here the path to the input
+		String inputFile = "resources/last-fm-sample100000.tsv";
 		String appName = "UsersetSpark";
-	
-		SparkConf conf  = new SparkConf().setAppName(appName)
-										 .setMaster("local[*]");
-		
+
+		SparkConf conf = new SparkConf().setAppName(appName).setMaster("local[*]");
+
 		JavaSparkContext context = new JavaSparkContext(conf);
-		
-		//Read file
+
+		// Read file
 		JavaRDD<String> input = context.textFile(inputFile);
-		
-		//Split lines into words
-		JavaRDD<String> words = input.flatMap(line->
-		{String[] parts = line.split("DUMMY VALUE");return Arrays.asList(parts).iterator();});
-		
-		JavaPairRDD<String, String> wordOne = words.mapToPair(word -> 
-	{return new Tuple2<String,String>(word.split("\t")[3], word.split("\t")[0]);});
+
+		// Split lines into words
+		JavaPairRDD<String, String> wordOne = input.mapToPair(line -> {
+			String[] splitted=line.split("\t");
+			return new Tuple2<String, String>(splitted[3], splitted[0]);
+		});
 
 		JavaPairRDD<String, Userset> usersetcount = wordOne.aggregateByKey(
-				//aggregator initial value
+				// aggregator initial value
 				new Userset(),
-				//how to add a value to aggregator
+				// how to add a value to aggregator
 				(agg, value) -> agg.add(value),
-				//how to combine two aggregators
-				(agg1,agg2) -> agg1.add(agg2)
-				);
+				// how to combine two aggregators
+				(agg1, agg2) -> agg1.add(agg2));
 
-		 
-		//usersetcount.saveAsTextFile("userset");
-		List<String> ans = new ArrayList<String>();
-		for (Tuple2<String, Userset> test : usersetcount.collect()) {
-			ans.add(test._1 + ", " + test._2.userset);
-        }
-		FileUtils.writeLines(new File("userset.txt"), "utf-8", ans);
+		usersetcount.saveAsTextFile("userset");
 		context.close();
 
 	}

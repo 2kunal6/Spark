@@ -31,6 +31,10 @@ public class Userset implements Serializable {
 		return 1.0 - ((double) intersection.size()/union.size());
 	}
 	
+	public String toString() {
+		return userset.toString();
+	}
+	
 	public static void main(String[] args) {
 		Userset a = new Userset();
 		a.add("u1");
