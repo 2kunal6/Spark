@@ -7,6 +7,6 @@ spark = SparkSession.builder \
       .getOrCreate()
 
 # Create RDD from external Data source
-rdd = spark.sparkContext.textFile("sample.csv")
+rdd = spark.sparkContext.textFile("data/sample.csv")
 
 print(rdd)
